@@ -21,10 +21,10 @@ source("useful_functions.R")
 #######################################################################
 
 # Directory to store result
-dir.storeGene <- paste0("Result_artical/gene_level")
+dir.storeGene <- paste0("Result_infer_signature/gene_level")
 dir.create(file.path(dir.storeGene), showWarnings = FALSE, recursive = TRUE)
 
-dir.storeCtg <- paste0("Result_artical/kmer_level")
+dir.storeCtg <- paste0("Result_infer_signature/kmer_level")
 dir.create(file.path(dir.storeCtg), showWarnings = FALSE, recursive = TRUE)
 
 # File store data LR vs HR
