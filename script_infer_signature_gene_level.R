@@ -34,7 +34,7 @@ NUM_RUNS=100
 nKeep = 500
 
 # Directory to store result
-dir.store <- paste0("Result_artical/gene_level")
+dir.store <- paste0("Result_infer_signature/gene_level")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 
 #################################
