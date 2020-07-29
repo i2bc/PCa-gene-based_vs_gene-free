@@ -302,7 +302,7 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
     
     wilcoxon_pvalue<-as.numeric(format(wilcox.test(LRvalues,HRvalues)$p.value,scientific=T,digits=4,quote=F))
     
-    boxplots_frame<-rbind(boxplots_frame,data.frame(probes=nameProbe[i],mean_HR = meanHR,mean_LR = meanLR,log2FC=log2FC,wilcoxon_pvalue=wilcoxon_pvalue)) 
+    boxplots_frame<-rbind(boxplots_frame,data.frame(probes=nameProbe[i],mean_LR = round(meanLR, digits=2),mean_HR = round(meanHR, digits=2),log2FC=round(log2FC, digits=2),wilcoxon_pvalue=wilcoxon_pvalue)) 
     
   }
   
