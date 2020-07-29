@@ -298,7 +298,7 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
     
     meanLR<-mean(LRvalues)
     
-    log2FC<- log2(meanHR/meanLR)
+    log2FC<- meanHR - meanLR
     
     wilcoxon_pvalue<-as.numeric(format(wilcox.test(LRvalues,HRvalues)$p.value,scientific=T,digits=4,quote=F))
     
