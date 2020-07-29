@@ -273,12 +273,15 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
   #   status : String indicates with database will be use (tcga or icgc)
   # Results:
   #   Figure for boxplot
- 
-   #Plot boxplot for the count of signature
+  
+  #Plot boxplot for the count of signature
   white_background<-theme(axis.line = element_line(colour = "black"),
                           panel.grid.major = element_blank(),
                           panel.grid.minor = element_blank(),
                           panel.background = element_blank())
+  #Unlog the dataPlot into CPM/CPB expression
+  unlog <- exp(dataPlot[-c(1,2)])
+  dataPlot <- cbind(dataPlot[c(1,2)], unlog)
   
   nameProbe <- names(dataPlot[3:length(names(dataPlot))])
   my.data <- melt(dataPlot,measure.vars=c(names(dataPlot[3:length(names(dataPlot))])))
@@ -296,28 +299,28 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
     
     LRvalues <- my.data[which(my.data[,"condition"]=="LR" & my.data$variable == nameProbe[i]),]$value
     
-    meanLR<-mean(LRvalues)
+    meanLR<- mean(LRvalues)
     
-    log2FC<- meanHR - meanLR
+    logFC<- log(meanHR/ meanLR)
     
     wilcoxon_pvalue<-as.numeric(format(wilcox.test(LRvalues,HRvalues)$p.value,scientific=T,digits=4,quote=F))
     
-    boxplots_frame<-rbind(boxplots_frame,data.frame(probes=nameProbe[i],mean_LR = round(meanLR, digits=2),mean_HR = round(meanHR, digits=2),log2FC=round(log2FC, digits=2),wilcoxon_pvalue=wilcoxon_pvalue)) 
+    boxplots_frame<-rbind(boxplots_frame,data.frame(probes=nameProbe[i],mean_LR = round(meanLR, digits=2),mean_HR = round(meanHR, digits=2),logFC=round(logFC, digits=2),wilcoxon_pvalue=wilcoxon_pvalue)) 
     
   }
   
-  # The order of contig based on log2FC decreasing
-  ctgLogFC <- nameProbe[order(abs(boxplots_frame$log2FC), decreasing = TRUE)]
-  frameLog2FC <- boxplots_frame[match(ctgLogFC,boxplots_frame$probes),]
+  # The order of contig based on logFC decreasing
+  ctgLogFC <- nameProbe[order(abs(boxplots_frame$logFC), decreasing = TRUE)]
+  frameLogFC <- boxplots_frame[match(ctgLogFC,boxplots_frame$probes),]
   # Save
   
   if (status == "tcga"){
-    name.file <- paste0(dir.name, "/log2FC-sig-", modeLevel, "-tcga.tsv")
+    name.file <- paste0(dir.name, "/logFC-sig-", modeLevel, "-tcga.tsv")
   }else {
-    name.file <- paste0(dir.name, "/log2FC-sig-", modeLevel, "-icgc.tsv")
+    name.file <- paste0(dir.name, "/logFC-sig-", modeLevel, "-icgc.tsv")
   }
   
-  write.table(frameLog2FC, file = name.file, sep = "\t", quote = FALSE, row.names = FALSE)
+  write.table(frameLogFC, file = name.file, sep = "\t", quote = FALSE, row.names = FALSE)
   
   # Reoder the dataframe
   data.plot <- melt(dataPlot,measure.vars= ctgLogFC)
