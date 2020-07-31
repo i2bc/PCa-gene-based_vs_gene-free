@@ -323,5 +323,3 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
 
 resContig <- pipeline(topProbesPath = topContig, samplesConditionDisPath = sampleTCGA, dataValidPath = kmerICGC,
                     samplesConditionValidPath = sampleICGC, numruns = NUM_RUNS)
-
-#################################
