@@ -280,11 +280,10 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
                           panel.grid.minor = element_blank(),
                           panel.background = element_blank())
   #Unlog the dataPlot into CPM/CPB expression
-  unlog <- exp(dataPlot[-c(1,2)])
-  dataPlot <- cbind(dataPlot[c(1,2)], unlog)
+  dataNormalized <- cbind(dataPlot[c(1,2)], unlog)
   
-  nameProbe <- names(dataPlot[3:length(names(dataPlot))])
-  my.data <- melt(dataPlot,measure.vars=c(names(dataPlot[3:length(names(dataPlot))])))
+  nameProbe <- names(dataNormalized[3:length(names(dataNormalized))])
+  my.data <- melt(dataNormalized,measure.vars=c(names(dataNormalized[3:length(names(dataNormalized))])))
   my.data$value <- as.numeric(my.data$value)
   if(modeLevel == "contig"){xlabel = "Contigs"}
   if(modeLevel == "gene"){xlabel = "Genes"}
@@ -323,6 +322,7 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
   write.table(frameLogFC, file = name.file, sep = "\t", quote = FALSE, row.names = FALSE)
   
   # Reoder the dataframe
+  dataPlot$condition = factor(dataPlot$condition, levels = c("LR", "HR"))
   data.plot <- melt(dataPlot,measure.vars= ctgLogFC)
   
   boxPlot<-ggplot(data.plot, aes(x=variable,y=value,fill=condition))+ theme_bw() + geom_boxplot(outlier.size =0.5)+
