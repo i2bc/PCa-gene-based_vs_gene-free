@@ -11,9 +11,7 @@ set.seed(12678)
 # Load libraries
 ################
 
-library(knitr)
 library(data.table)
-library(RColorBrewer)
 ################
 # Load list of functions 
 ################
