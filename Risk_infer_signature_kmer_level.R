@@ -10,10 +10,7 @@ set.seed(12678)
 ################
 # Load libraries
 ################
-
-library(knitr)
 library(data.table)
-library(RColorBrewer)
 library(edgeR)
 ################
 # Load list of functions 
