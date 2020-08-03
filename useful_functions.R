@@ -12,16 +12,16 @@ set.seed(12678)
 ################
 
 library(glmnet)
-library(caTools)
+#library(caTools)
 library(caret)
 library(precrec)
-library(zoo)
-library(knitr)
-library(parallel)
+#library(zoo)
+#library(knitr)
+#library(parallel)
 library(data.table)
 library(foreach)
-library(doParallel)
-library(seqinr)
+#library(doParallel)
+#library(seqinr)
 library(EnsDb.Hsapiens.v79)
 ################
 # Load list of functions 
@@ -193,7 +193,7 @@ fromContig2Kmers <- function(sigDiscovery, kmer_len=31, lib_type ="unstranded"){
 ###############
 # E) Function calculater auc of signature in validation set
 ###############
-takeDataReturnAUC_ICGC<- function(frameTrain, frameTest, absentContig){
+takeDataReturnAUC<- function(frameTrain, frameTest, absentContig, status){
   # Calculate auc of signature 
   #
   # Args:
@@ -234,6 +234,12 @@ takeDataReturnAUC_ICGC<- function(frameTrain, frameTest, absentContig){
   # Set coefficent of absent contig =0
   if(length(absentContig)!=0){
 
+    for (i in 1:length(absentContig)){
+	  if(grepl("-", absentContig[i], fixed = TRUE)){
+		absentContig[i] = paste0("`\\`", absentContig[i], "\\``")
+      }
+    }
+
     for (contig in absentContig){
       
       glmFit$finalModel$coefficients[contig] = 0
@@ -243,7 +249,12 @@ takeDataReturnAUC_ICGC<- function(frameTrain, frameTest, absentContig){
   }
   
   # Predition for test data
-  pred = predict(glmFit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
+  if(status == "risk"){
+	pred = predict(glmFit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
+  }
+  if(status == "relapse"){
+	  pred = predict(glmFit, data.test[,-1, drop = FALSE], type = "prob")[, "No"]
+  }
   
   # Calculate auc for ROC curve
   resAUC <- auc(evalmod(scores = pred, labels = data.test$condition))
@@ -258,80 +269,6 @@ takeDataReturnAUC_ICGC<- function(frameTrain, frameTest, absentContig){
   # Variable importance
   
   return(list(aucMeanTCGA, aucSdTCGA, rocAUC, varImp(glmFit)))
-}
-
-################
-## F) Function to plot box plot
-################
-boxPlot <- function(dataPlot, modeLevel, dir.name, status){
-  # Plot box plot 
-  #
-  # Args:
-  #   dataPlot: Data frame containes expression of selected probes
-  #   modeLevel : String indicates gene-level or kmer-level
-  #   dir.name : Path storing
-  #   status : String indicates with database will be use (tcga or icgc)
-  # Results:
-  #   Figure for boxplot
-  
-  #Plot boxplot for the count of signature
-  white_background<-theme(axis.line = element_line(colour = "black"),
-                          panel.grid.major = element_blank(),
-                          panel.grid.minor = element_blank(),
-                          panel.background = element_blank())
-  #Unlog the dataPlot into CPM/CPB expression
-  dataNormalized <- cbind(dataPlot[c(1,2)], unlog)
-  
-  nameProbe <- names(dataNormalized[3:length(names(dataNormalized))])
-  my.data <- melt(dataNormalized,measure.vars=c(names(dataNormalized[3:length(names(dataNormalized))])))
-  my.data$value <- as.numeric(my.data$value)
-  if(modeLevel == "contig"){xlabel = "Contigs"}
-  if(modeLevel == "gene"){xlabel = "Genes"}
-  
-  boxplots_frame<-data.frame()
-  
-  for(i in 1: length(nameProbe)){
-    
-    HRvalues <- my.data[which(my.data[,"condition"]=="HR" & my.data$variable == nameProbe[i]),]$value
-    
-    meanHR <- mean(HRvalues)
-    
-    LRvalues <- my.data[which(my.data[,"condition"]=="LR" & my.data$variable == nameProbe[i]),]$value
-    
-    meanLR<- mean(LRvalues)
-    
-    logFC<- log(meanHR/ meanLR)
-    
-    wilcoxon_pvalue<-as.numeric(format(wilcox.test(LRvalues,HRvalues)$p.value,scientific=T,digits=4,quote=F))
-    
-    boxplots_frame<-rbind(boxplots_frame,data.frame(probes=nameProbe[i],mean_LR = round(meanLR, digits=2),mean_HR = round(meanHR, digits=2),logFC=round(logFC, digits=2),wilcoxon_pvalue=wilcoxon_pvalue)) 
-    
-  }
-  
-  # The order of contig based on logFC decreasing
-  ctgLogFC <- nameProbe[order(abs(boxplots_frame$logFC), decreasing = TRUE)]
-  frameLogFC <- boxplots_frame[match(ctgLogFC,boxplots_frame$probes),]
-  # Save
-  
-  if (status == "tcga"){
-    name.file <- paste0(dir.name, "/logFC-sig-", modeLevel, "-tcga.tsv")
-  }else {
-    name.file <- paste0(dir.name, "/logFC-sig-", modeLevel, "-icgc.tsv")
-  }
-  
-  write.table(frameLogFC, file = name.file, sep = "\t", quote = FALSE, row.names = FALSE)
-  
-  # Reoder the dataframe
-  dataPlot$condition = factor(dataPlot$condition, levels = c("LR", "HR"))
-  data.plot <- melt(dataPlot,measure.vars= ctgLogFC)
-  
-  boxPlot<-ggplot(data.plot, aes(x=variable,y=value,fill=condition))+ theme_bw() + geom_boxplot(outlier.size =0.5)+
-    ylab("log(normalized expression)")+xlab(xlabel)+ggtitle(paste("Distribution of probes expression\n","nb probes = ",
-                                                                  length(unique(my.data$variable)),"\nnb samples = ",length(unique(my.data$Sample)),
-                                                                  " (LR = ",length(unique(my.data[which(my.data$condition=="LR"),]$Sample))," ; HR = ",length(unique(my.data[which(my.data$condition=="HR"),]$Sample)),")",sep=""))+
-    theme(axis.text.x=element_text(color="black",size=12,angle=45,hjust=1),axis.text.y = element_text(color="black",size=14),plot.title = element_text(hjust = 0.5,size=16),
-          axis.title=element_text(size=16,face="bold"),legend.text=element_text(size=14),legend.title=element_text(size=16))+
-    scale_fill_manual(values=c("LR"="cornflowerblue","HR"="red"),name="conditions") + white_background
 }
 
 ################
