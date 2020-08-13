@@ -18,8 +18,8 @@ library(ggplot2)
 #######################################################################
 
 # Directory to store result
-dir.storeGene <- paste0("Result_article/gene_level")
-dir.storeCtg <- paste0("Result_article/kmer_level")
+dir.storeGene <- paste0("Result_article/Risk/gene_level")
+dir.storeCtg <- paste0("Result_article/Risk/kmer_level")
 
 # File store data LR vs HR
 gene_discover_path = paste0( dir.storeGene, "/data-sig-gene-tcga.tsv")
@@ -105,8 +105,6 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
   # The order of contig based on logFC decreasing
   ctgLogFC <- nameProbe[order(abs(boxplots_frame$logFC), decreasing = TRUE)]
   
-
-
   frameLogFC <- boxplots_frame[match(ctgLogFC,boxplots_frame$probes),]
   # Save
   
