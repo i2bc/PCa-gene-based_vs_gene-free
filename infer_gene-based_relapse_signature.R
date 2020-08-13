@@ -21,22 +21,21 @@ source("useful_functions.R")
 
 # Discovery data using top 100 NB10 gene and contig
 
-topGene <-"Data_discovery/top2k_TCGA_gene_norm.nb5.out"
-sampleTCGA <-"Data_discovery/sample_conditions.tsv"
+topGene <-"Data_discovery/Relapse/top500_TCGA_gene_norm.nb5.out"
+sampleTCGA <-"Data_discovery/Relapse/sample_conditions.tsv"
 
 # Validation ICGC data
-sampleICGC <- "Data_validation/sample_cond_icgc.tsv"
-geneICGC <- "Data_validation/gene-norm-ICGC-Relapse-2-2.tsv"
+sampleICGC <- "Data_validation/Relapse/sample_cond_icgc.tsv"
+geneICGC <- "Data_validation/Relapse/gene-norm-ICGC-Relapse-2-2.tsv"
 
 # Validation Stello data
-sampleStelloo <- "Data_validation/sample_cond_stelloo.tsv"
-geneStelloo <- "Data_validation/gene-filter-norm-Stello-Relapse-3-5.tsv"
+sampleStelloo <- "Data_validation/Relapse/sample_cond_stelloo.tsv"
+geneStelloo <- "Data_validation/Relapse/gene-filter-norm-Stello-Relapse-3-5.tsv"
 
 NUM_RUNS=100
-nKeep = 100
 
 # Directory to store result
-dir.store <- paste0("Result_article/gene_level/", nKeep)
+dir.store <- paste0("Result_article/Relapse/gene_level")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 evaluate_gene <- function( sigGeneDis, dataSigDis, dataValidPath, samplesConditionValidPath){
@@ -95,7 +94,6 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, numruns){
   # loading top  genes/contigs in TCGA discovery dataset based on approach level
   countTopProbe <- as.data.frame(fread(topProbesPath, sep="\t", header = TRUE))
   countTopProbe <- data.frame(row.names = countTopProbe$feature, countTopProbe[,-c(1,2)], check.names=F)
-  countTopProbe <- countTopProbe[1:nKeep,]
 
   ########## processing of conditions ##############
   samplesConditionDis<-as.data.frame(fread(samplesConditionDisPath,sep="\t", header= FALSE ,check.names=F))
