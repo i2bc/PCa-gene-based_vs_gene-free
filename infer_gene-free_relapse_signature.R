@@ -40,7 +40,7 @@ totalKmersStelloo <- paste0(dir.validation, "sum_counts.tsv")
 NUM_RUNS=100
 
 # Directory to store result
-dir.store <- paste0("Result_article/Relapse/kmer_level")
+dir.store <- paste0("Result_article/Relapse/gene_free")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 evaluate_contig <- function(ctgMappDis, dataSigDis, sigContigDis, sigContigDisPath, dataValidPath, samplesConditionValidPath, modeValid){
