@@ -264,7 +264,7 @@ takeDataReturnAUC<- function(frameTrain, frameTest, absentContig, status){
 }
 
 ################
-## G) Function to take gene name from gene ensembl
+## F) Function to take gene name from gene ensembl
 ################
 fromGeneIDtakeGenName <- function(geneEnsembl){
   # Infer gene symbol from gene ensembl 
@@ -277,4 +277,37 @@ fromGeneIDtakeGenName <- function(geneEnsembl){
   geneAnno <- gsub("\\..*","",geneEnsembl)
   geneAnno <- ensembldb::select(EnsDb.Hsapiens.v79, keys= geneAnno, keytype = "GENEID", columns = c("SYMBOL","GENEID")) 
   return (geneAnno)
+}
+################
+## G) Function to CBP normalize for kmers are found in validation set
+################
+normalizeContig <-function(validCountPath, libSizePath){
+  # CBP normalization for kmer are found in validation set
+  #
+  # Args:
+  #  validCountPath: Path to store validation data
+  #  libSizePath: Path to store total of kmers for each sample in validation set
+  # Results:
+  # Dataframe store normalized kmer counts are found in validation set
+	
+  # Dataframe stores kmers count that are found in validation set
+  countKmerValid <- as.data.frame(fread(validCountPath, sep="\t", header = TRUE))
+  
+  rownames(countKmerValid) <- countKmerValid$tag
+  
+  countKmerValid <- countKmerValid[,-1]
+  
+  # Dataframe, each line is a sample and its corresponding total of kmers
+  inforKmerValid <- as.data.frame(fread(libSizePath, sep="\t", header = FALSE))
+  names(inforKmerValid) <- c("Sample", "Total_kmers")
+  rownames(inforKmerValid) <- inforKmerValid$Sample
+  
+  #Sort libSize base on sample name
+  inforKmerValid <- inforKmerValid[colnames(countKmerValid),]
+  libSizeValid <- inforKmerValid$Total_kmers
+  
+  # compute logCPB
+  logCpbValid <- log(countKmerValid/expandAsMatrix(libSizeValid/1e+09, dim(countKmerValid))+1)
+  
+  return (logCpbValid)
 }
