@@ -38,7 +38,7 @@ geneStelloo <- paste0(dir.validation, "gene-filter-norm-Stello-Relapse-3-5.tsv")
 NUM_RUNS=100
 
 # Directory to store result
-dir.store <- paste0("Result_article/Relapse/gene_based")
+dir.store <- paste0("Result_infer_signature/Relapse/gene_based")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 evaluate_gene <- function( sigGeneDis, dataSigDis, dataValidPath, samplesConditionValidPath){
