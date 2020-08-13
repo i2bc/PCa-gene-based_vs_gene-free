@@ -18,15 +18,15 @@ library(ggplot2)
 #######################################################################
 
 # Directory to store result
-dir.storeGene <- "Result_article/Risk/gene_level"
-dir.storeCtg <- "Result_article/Risk/kmer_level"
+dir.storeGene <- "Result_article/Risk/gene_based/"
+dir.storeCtg <- "Result_article/Risk/gene_free/"
 
 # File store data LR vs HR
-gene_discover_path = paste0( dir.storeGene, "/data-sig-gene-tcga.tsv")
-gene_valid_path = paste0( dir.storeGene, "/data-sig-gene-icgc.tsv")
+gene_discover_path = paste0( dir.storeGene, "data-sig-gene-tcga.tsv")
+gene_valid_path = paste0( dir.storeGene, "data-sig-gene-icgc.tsv")
 
-contig_discover_path = paste0( dir.storeCtg, "/data-sig-contig-tcga.tsv")
-contig_valid_path = paste0( dir.storeCtg, "/data-sig-contig-icgc.tsv")
+contig_discover_path = paste0( dir.storeCtg, "data-sig-contig-tcga.tsv")
+contig_valid_path = paste0( dir.storeCtg, "data-sig-contig-icgc.tsv")
 
 # Load data
 dataGeneDis <- as.data.frame(fread(gene_discover_path, sep="\t", header = TRUE))
@@ -109,9 +109,9 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
   # Save
   
   if (status == "tcga"){
-    name.file <- paste0(dir.name, "/logFC-sig-", modeLevel, "-tcga.tsv")
+    name.file <- paste0(dir.name, "logFC-sig-", modeLevel, "-tcga.tsv")
   }else {
-    name.file <- paste0(dir.name, "/logFC-sig-", modeLevel, "-icgc.tsv")
+    name.file <- paste0(dir.name, "logFC-sig-", modeLevel, "-icgc.tsv")
   }
   
   write.table(frameLogFC, file = name.file, sep = "\t", quote = FALSE, row.names = FALSE)
@@ -131,22 +131,22 @@ boxPlot <- function(dataPlot, modeLevel, dir.name, status){
 ##################################
 # Box plot for signature in TCGA
 boxPlotGeneDis <- boxPlot(dataPlot = dataGeneDis, modeLevel = "gene" , dir.name = dir.storeGene, status = "tcga")
-png(filename = paste0(dir.storeGene, "/box-plot-sig-gene-tcga.png"), width = 3200, height = 1600, units = "px", res = 300)
+png(filename = paste0(dir.storeGene, "box-plot-sig-gene-tcga.png"), width = 3200, height = 1600, units = "px", res = 300)
 plot(boxPlotGeneDis)
 dev.off()
 
 boxPlotContigDis <- boxPlot(dataPlot = dataContigDis, modeLevel = "contig" , dir.name = dir.storeCtg, status = "tcga")
-png(filename = paste0(dir.storeCtg, "/box-plot-sig-contig-tcga.png"), width = 3200, height = 1600, units = "px", res = 300)
+png(filename = paste0(dir.storeCtg, "box-plot-sig-contig-tcga.png"), width = 3200, height = 1600, units = "px", res = 300)
 plot(boxPlotContigDis)
 dev.off()
 
 # Box plot for signature in ICGC
 boxPlotGeneValid <- boxPlot(dataPlot = dataGeneValid, modeLevel = "gene" , dir.name = dir.storeGene, status = "icgc")
-png(filename = paste0(dir.storeGene, "/box-plot-sig-gene-icgc.png"), width = 3200, height = 1600, units = "px", res = 300)
+png(filename = paste0(dir.storeGene, "box-plot-sig-gene-icgc.png"), width = 3200, height = 1600, units = "px", res = 300)
 plot(boxPlotGeneValid)
 dev.off()
 
 boxPlotContigValid <- boxPlot(dataPlot = dataContigValid, modeLevel = "contig" , dir.name = dir.storeCtg, status = "icgc")
-png(filename = paste0(dir.storeCtg, "/box-plot-sig-contig-icgc.png"), width = 3200, height = 1600, units = "px", res = 300)
+png(filename = paste0(dir.storeCtg, "box-plot-sig-contig-icgc.png"), width = 3200, height = 1600, units = "px", res = 300)
 plot(boxPlotContigValid)
 dev.off()
