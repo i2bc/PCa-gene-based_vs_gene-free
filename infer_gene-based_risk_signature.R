@@ -33,7 +33,7 @@ geneICGC <- paste0(dir.validation,"gene-counts-ICGC148-LRHR.norm.tsv")
 NUM_RUNS=100
 
 # Directory to store result
-dir.store <- paste0("Result_article/Risk/gene_based")
+dir.store <- paste0("Result_infer_signature/Risk/gene_based")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 
 #################################
