@@ -22,7 +22,7 @@ source("useful_functions.R")
 # Discovery data using top 500 NB5 genes
 dir.discovery <- "Data_discovery/Relapse/"
 
-topGene <- paste0(dir.discovery, "top500_TCGA_gene_norm.nb5.out")
+topGene <- paste0(dir.discovery, "top500_TCGA_gene_norm.nb5.tsv")
 sampleTCGA <- paste0(dir.discovery, "sample_conditions.tsv")
 
 # Validation ICGC data
