@@ -18,8 +18,8 @@ library(ggplot2)
 #######################################################################
 
 # Directory to store result
-dir.storeGene <- "Result_article/Risk/gene_based/"
-dir.storeCtg <- "Result_article/Risk/gene_free/"
+dir.storeGene <- "Result_infer_signature/Risk/gene_based/"
+dir.storeCtg <- "Result_infer_signature/Risk/gene_free/"
 
 # File store data LR vs HR
 gene_discover_path = paste0( dir.storeGene, "data-sig-gene-tcga.tsv")
