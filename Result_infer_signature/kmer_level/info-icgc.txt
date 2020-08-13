@@ -1,3 +1,0 @@
-"","x"
-"1","Contig signature include: 26 contigs that are created 1444 kmer(s)
- There are:  1404 kmers found in validation and belong to 21 contigs"
