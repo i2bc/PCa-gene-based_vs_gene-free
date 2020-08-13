@@ -1,0 +1,94 @@
+[1] "HECW2-AS1"
+[1] "ASPN"
+[1] "COL1A1"
+[1] "CD38"
+[1] "CAMK2N1"
+[1] "SFRP4"
+[1] "ASPN"
+[1] "TROAP"
+[1] "SRD5A2"
+[1] "COL1A1"
+[1] "EFNA2"
+[1] "GTSE1"
+[1] "COL1A1"
+[1] "PGM5-AS1"
+[1] "MYBPC1"
+[1] "UGT2B15"
+[1] "GMNN"
+[1] "COL3A1"
+[1] "AC069228.1"
+[1] "HOPX"
+[1] "USP9YP32"
+[1] "PTPRN2"
+[1] "SLC22A3"
+[1] "ANO7"
+[1] "Contig signature include: 26 contigs that are created 1444 kmer(s)\n There are:  1404 kmers found in validation and belong to 21 contigs"
+[1] "HECW2-AS1"
+[1] "ASPN"
+[1] "COL1A1.v20"
+[1] "CD38"
+[1] "CAMK2N1"
+[1] "ASPN.v24"
+[1] "TROAP"
+[1] "SRD5A2"
+[1] "EFNA2"
+[1] "PGM5-AS1"
+[1] "MYBPC1"
+[1] "UGT2B15"
+[1] "GMNN"
+[1] "AC069228.1"
+[1] "ctg_20"
+[1] "HOPX"
+[1] "USP9YP32"
+[1] "ctg_23"
+[1] "PTPRN2"
+[1] "SLC22A3"
+[1] "ANO7"
+[1] "List 26 contigs in signature that found in TCGA."
+ [1] "HECW2-AS1"  "ASPN"       "COL1A1.v20" "CD38"       "CAMK2N1"   
+ [6] "SFRP4"      "ASPN.v24"   "TROAP"      "SRD5A2"     "COL1A1"    
+[11] "EFNA2"      "GTSE1"      "COL1A1.v5"  "PGM5-AS1"   "MYBPC1"    
+[16] "UGT2B15"    "GMNN"       "COL3A1"     "AC069228.1" "ctg_20"    
+[21] "HOPX"       "USP9YP32"   "ctg_23"     "PTPRN2"     "SLC22A3"   
+[26] "ANO7"      
+[1] "There are 23 unique genes in signature in TCGA."
+[1] "List contig signature are found in ICGC"
+ [1] "HECW2-AS1"  "ASPN"       "COL1A1.v20" "CD38"       "CAMK2N1"   
+ [6] "ASPN.v24"   "TROAP"      "SRD5A2"     "EFNA2"      "PGM5-AS1"  
+[11] "MYBPC1"     "UGT2B15"    "GMNN"       "AC069228.1" "ctg_20"    
+[16] "HOPX"       "USP9YP32"   "ctg_23"     "PTPRN2"     "SLC22A3"   
+[21] "ANO7"      
+[1] "Contig Absentce:"
+[1] "SFRP4"     "COL1A1"    "GTSE1"     "COL1A1.v5" "COL3A1"   
+                              [,1]
+AUC signature contig in ICGC 0.852
+Mean AUC cross-valid (TCGA)  0.935
+SD AUC cross-valid (TCGA)    0.038
+[1] "Contribution of each contig in signature:"
+                  Contig_map_to_gene   Overall
+USP9YP32                    USP9YP32 100.00000
+CAMK2N1                      CAMK2N1  76.47011
+ctg_20                        ctg_20  67.99529
+ASPN                            ASPN  63.29839
+PTPRN2                        PTPRN2  61.65486
+TROAP                          TROAP  60.54339
+ANO7                            ANO7  60.03558
+SRD5A2                        SRD5A2  58.54418
+ASPN.v24                    ASPN.v24  51.75569
+EFNA2                          EFNA2  37.03311
+UGT2B15                      UGT2B15  36.90517
+COL1A1.v20                COL1A1.v20  36.82194
+SLC22A3                      SLC22A3  35.87986
+`\\`HECW2-AS1\\``  `\\`HECW2-AS1\\``  35.55358
+HOPX                            HOPX  28.50533
+GMNN                            GMNN  27.51682
+AC069228.1                AC069228.1  26.79514
+ctg_23                        ctg_23  26.47224
+`\\`PGM5-AS1\\``    `\\`PGM5-AS1\\``  22.09337
+MYBPC1                        MYBPC1  21.57296
+CD38                            CD38  15.90991
+SFRP4                          SFRP4   0.00000
+COL1A1                        COL1A1   0.00000
+GTSE1                          GTSE1   0.00000
+COL1A1.v5                  COL1A1.v5   0.00000
+COL3A1                        COL3A1   0.00000
