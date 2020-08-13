@@ -21,37 +21,40 @@ source("useful_functions.R")
 #######################################################################
 
 # Discovery data kmer level
-topContig <- "Data_discovery/top2k_contig_merge_norm.nb5.out"
-sampleTCGA <-"Data_discovery/sample_conditions.tsv"
+dir.discovery <- "Data_discovery/Risk/"
+
+topContig <- paste0( dir.discovery, "top500_contig_merge_norm.nb5.out")
+sampleTCGA <- paste0( dir.discovery,"sample_conditions.tsv")
 
 # Validation data
-sampleICGC <- "Data_validation/sample_conditions.tsv"
-kmerICGC <- "Data_validation/raw-counts.tsv.gz"
-totalKmers <-"Data_validation/sum_counts.tsv"
+dir.validation <- "Data_validation/Risk/"
+
+sampleICGC <- paste0(dir.validation, "sample_conditions.tsv")
+kmerICGC <- paste0(dir.validation, "raw-counts.tsv.gz")
+totalKmers <- paste0(dir.validation, "sum_counts.tsv")
 
 
 NUM_RUNS=100
-nKeep = 500
 
 # Directory to store result
-dir.store <- paste0("Result_article/kmer_level")
+dir.store <- paste0("Result_article/Risk/kmer_level")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 normalizeContig <-function(validCountPath, libSizePath){
   
-  # Normalization based on logCPM
+  # Dataframe stores kmers count that are found in validation set
   countKmerICGC <- as.data.frame(fread(validCountPath, sep="\t", header = TRUE))
   
   rownames(countKmerICGC) <- countKmerICGC$tag
   
   countKmerICGC <- countKmerICGC[,-1]
   
-  # Normalization based on logCPM
+  # Dataframe, each line is a sample and its corresponding total of kmers
   inforKmerICGC <- as.data.frame(fread(libSizePath, sep="\t", header = FALSE))
   names(inforKmerICGC) <- c("Sample", "Total_kmers")
   rownames(inforKmerICGC) <- inforKmerICGC$Sample
   
-  #Sort libSize base on sample name
+  # Sort libSize base on sample name
   inforKmerICGC <- inforKmerICGC[colnames(countKmerICGC),]
   libSizeICGC <- inforKmerICGC$Total_kmers
   
@@ -68,8 +71,6 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
     
   countTopProbe <- data.frame(row.names = countTopProbe$feature, countTopProbe[,-c(1:4)], check.names=F)    
     
-  countTopProbe <- countTopProbe[1:nKeep,]
-
   ########## processing of conditions ##############
   samplesConditionDis<-as.data.frame(fread(samplesConditionDisPath,sep="\t", header= FALSE ,check.names=F))
   names(samplesConditionDis)<-c("Sample","condition")
