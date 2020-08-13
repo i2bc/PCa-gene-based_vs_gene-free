@@ -19,31 +19,31 @@ source("useful_functions.R")
 ## scripts
 #######################################################################
 
-# Discovery data using top 500 NB5 gene
-topGene <-"Data_discovery/top2k_TCGA_gene_norm.nb5.out"
-sampleTCGA <-"Data_discovery/sample_conditions.tsv"
+# Discovery data using top 500 NB5 genes
+dir.discovery <- "Data_discovery/Risk/"
+
+topGene <- paste0( dir.discovery, "top500_TCGA_gene_norm.nb5.out"
+sampleTCGA <- paste0( dir.discovery, "sample_conditions.tsv"
 
 # Validation data
-sampleICGC <- "Data_validation/sample_conditions.tsv"
-geneICGC <- "Data_validation/gene-counts-ICGC148-LRHR.norm.tsv"
+dir.validation <- "Data_validation/Risk/"		   
+sampleICGC <- paste0( dir.validation, "sample_conditions.tsv"
+geneICGC <- paste0( dir.validation,"gene-counts-ICGC148-LRHR.norm.tsv"
 
 NUM_RUNS=100
-nKeep = 500
 
 # Directory to store result
-dir.store <- paste0("Result_article/gene_level")
+dir.store <- paste0("Result_article/Risk/gene_level")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 
 #################################
 pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samplesConditionValidPath, numruns){
   
-  # loading top 500 genes/contigs in TCGA discovery dataset based on approach level
+  # loading top 500 genes in TCGA discovery dataset
   countTopProbe <- as.data.frame(fread(topProbesPath, sep="\t", header = TRUE))
   
   countTopProbe <- data.frame(row.names = countTopProbe$feature, countTopProbe[,-c(1,2)], check.names=F)
-    
-  countTopProbe <- countTopProbe[1:nKeep,]
-  
+
   ########## processing of conditions ##############
   samplesConditionDis<-as.data.frame(fread(samplesConditionDisPath,sep="\t", header= FALSE ,check.names=F))
   names(samplesConditionDis)<-c("Sample","condition")
