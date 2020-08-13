@@ -20,51 +20,29 @@ source("useful_functions.R")
 #######################################################################
 
 # Discovery data using top 500 contigs
+dir.discovery <- "Data_discovery/Relapse/"
 
-topContig <- "Data_discovery/top500_contig_merge_norm.nb5.out"
-sampleTCGA <-"Data_discovery/sample_conditions.tsv"
+topContig <- paste0(dir.discovery, "top500_contig_merge_norm.nb5.out")
+sampleTCGA <- paste0(dir.discovery, "sample_conditions.tsv")
 
 # Validation ICGC data
-sampleICGC <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_ICGC_148samples/Download/DEkupl_run_Relapse_Mask/Result_Dekupl_3_5/sample_conditions.tsv"
-kmerICGC <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_ICGC_148samples/Download/DEkupl_run_Relapse_Mask/Result_Dekupl_2_2/raw-counts.tsv.gz"
-totalKmersICGC <-"/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_ICGC_148samples/Download/DEkupl_run_Relapse_Mask/Result_kamrat_2_2/Contig_level/sum_counts.tsv"
+dir.validation <- "Data_validation/Relapse/"
+
+sampleICGC <- paste0(dir.validation, "sample_conditions.tsv"
+kmerICGC <- paste0(dir.validation, "raw-counts.tsv.gz")
+totalKmersICGC <- paste0(dir.validation, "sum_counts.tsv")
 
 # Validation Stello data
-sampleStelloo <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_data_validation/Stello_data/Result_Dekupl/sample_conditions.tsv"
-kmerStelloo <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_data_validation/Stello_data/Result_Dekupl/limma_3_5/raw-counts-Stello-Relapse-3-3.tsv.gz"
-totalKmersStelloo <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_data_validation/Stello_data/Result_kamrat_3_5/Contig_level/Total_kmer/sum_counts.tsv"
+sampleStelloo <- paste0(dir.validation, "sample_conditions.tsv")
+kmerStelloo <- paste0(dir.validation, "raw-counts-Stello-Relapse-3-3.tsv.gz")
+totalKmersStelloo <- paste0(dir.validation, "sum_counts.tsv")
 
 NUM_RUNS=100
 
 # Directory to store result
-dir.store <- paste0("Result_article/Risk/kmer_level")
+dir.store <- paste0("Result_article/Relapse/kmer_level")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
-normalizeContig <-function(validCountPath, libSizePath){
-  
-  # Normalization based on logCPM
-  countKmerICGC <- as.data.frame(fread(validCountPath, sep="\t", header = TRUE))
-  
-  rownames(countKmerICGC) <- countKmerICGC$tag
-  
-  countKmerICGC <- countKmerICGC[,-1]
-  
-  # Normalization based on logCPM
-  inforKmerICGC <- as.data.frame(fread(libSizePath, sep="\t", header = FALSE))
-  names(inforKmerICGC) <- c("Sample", "Total_kmers")
-  rownames(inforKmerICGC) <- inforKmerICGC$Sample
-  
-  #Sort libSize base on sample name
-  inforKmerICGC <- inforKmerICGC[colnames(countKmerICGC),]
-  libSizeICGC <- inforKmerICGC$Total_kmers
-  
-  # compute logBPM
-  logCpmICGC <- log(countKmerICGC/expandAsMatrix(libSizeICGC/1e+09, dim(countKmerICGC))+1)
-  
-  return (logCpmICGC)
-}
-
-#################
 evaluate_contig <- function(ctgMappDis, dataSigDis, sigContigDis, sigContigDisPath, dataValidPath, samplesConditionValidPath, modeValid){
   
   # Call the sript infer
@@ -193,8 +171,6 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, numruns){
   countTopProbe <- as.data.frame(fread(topProbesPath, sep="\t", header = TRUE))
     
   countTopProbe <- data.frame(row.names = countTopProbe$feature, countTopProbe[,-c(1:4)], check.names=F)    
-
-  countTopProbe <- countTopProbe[1:nKeep,]
 
   ########## processing of conditions ##############
   samplesConditionDis<-as.data.frame(fread(samplesConditionDisPath,sep="\t", header= FALSE ,check.names=F))
