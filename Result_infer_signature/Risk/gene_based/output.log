@@ -1,0 +1,24 @@
+[1] "List 14 genes in signature:"
+ [1] "ASPN"       "AC020571.3" "C2"         "SRD5A2"     "CD38"      
+ [6] "HMGB2"      "BMP6"       "SLC22A3"    "SSTR1"      "COMP"      
+[11] "FMOD"       "PPFIA2"     "SMOC1"      "MYBPC1"    
+                             [,1]
+AUC signature gene in ICGC  0.867
+Mean AUC cross-valid (TCGA) 0.901
+SD AUC cross-valid (TCGA)   0.045
+[1] "Contribution of each gene in signature:"
+                 Gene    Overall
+HMGB2           HMGB2 100.000000
+C2                 C2  49.797892
+BMP6             BMP6  40.579944
+SMOC1           SMOC1  34.913773
+ASPN             ASPN  32.860606
+COMP             COMP  30.512619
+AC020571.3 AC020571.3  28.044796
+PPFIA2         PPFIA2  24.174839
+MYBPC1         MYBPC1  23.554075
+SRD5A2         SRD5A2  23.099855
+CD38             CD38  22.939002
+FMOD             FMOD  17.841296
+SSTR1           SSTR1   5.178191
+SLC22A3       SLC22A3   0.000000
