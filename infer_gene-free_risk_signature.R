@@ -22,7 +22,7 @@ source("useful_functions.R")
 # Discovery data kmer level
 dir.discovery <- "Data_discovery/Risk/"
 
-topContig <- paste0(dir.discovery, "top500_contig_merge_norm.nb5.out")
+topContig <- paste0(dir.discovery, "top500_contig_merge_norm.nb5.tsv")
 sampleTCGA <- paste0(dir.discovery,"sample_conditions.tsv")
 
 # Validation data
