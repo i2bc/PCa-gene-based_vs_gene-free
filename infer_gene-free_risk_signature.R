@@ -33,37 +33,12 @@ sampleICGC <- paste0(dir.validation, "sample_conditions.tsv")
 kmerICGC <- paste0(dir.validation, "raw-counts.tsv.gz")
 totalKmers <- paste0(dir.validation, "sum_counts.tsv")
 
-
 NUM_RUNS=100
 
 # Directory to store result
 dir.store <- paste0("Result_article/Risk/kmer_level")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
-normalizeContig <-function(validCountPath, libSizePath){
-  
-  # Dataframe stores kmers count that are found in validation set
-  countKmerICGC <- as.data.frame(fread(validCountPath, sep="\t", header = TRUE))
-  
-  rownames(countKmerICGC) <- countKmerICGC$tag
-  
-  countKmerICGC <- countKmerICGC[,-1]
-  
-  # Dataframe, each line is a sample and its corresponding total of kmers
-  inforKmerICGC <- as.data.frame(fread(libSizePath, sep="\t", header = FALSE))
-  names(inforKmerICGC) <- c("Sample", "Total_kmers")
-  rownames(inforKmerICGC) <- inforKmerICGC$Sample
-  
-  # Sort libSize base on sample name
-  inforKmerICGC <- inforKmerICGC[colnames(countKmerICGC),]
-  libSizeICGC <- inforKmerICGC$Total_kmers
-  
-  # compute logBPM
-  logCpmICGC <- log(countKmerICGC/expandAsMatrix(libSizeICGC/1e+09, dim(countKmerICGC))+1)
-  
-  return (logCpmICGC)
-}
-#################################
 pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samplesConditionValidPath, numruns){
   
   # loading top 500 contigs in TCGA discovery dataset
