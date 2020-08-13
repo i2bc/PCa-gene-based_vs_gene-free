@@ -22,8 +22,8 @@ source("useful_functions.R")
 # Discovery data kmer level
 dir.discovery <- "Data_discovery/Risk/"
 
-topContig <- paste0( dir.discovery, "top500_contig_merge_norm.nb5.out")
-sampleTCGA <- paste0( dir.discovery,"sample_conditions.tsv")
+topContig <- paste0(dir.discovery, "top500_contig_merge_norm.nb5.out")
+sampleTCGA <- paste0(dir.discovery,"sample_conditions.tsv")
 
 # Validation data
 dir.validation <- "Data_validation/Risk/"
@@ -35,7 +35,7 @@ totalKmers <- paste0(dir.validation, "sum_counts.tsv")
 NUM_RUNS=100
 
 # Directory to store result
-dir.store <- paste0("Result_article/Risk/kmer_level")
+dir.store <- paste0("Result_article/Risk/gene_free")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samplesConditionValidPath, numruns){
