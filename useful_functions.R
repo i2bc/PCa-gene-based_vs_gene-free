@@ -14,13 +14,10 @@ library(glmnet)
 library(caret)
 library(precrec)
 library(parallel)
+library(edgeR)
 library(EnsDb.Hsapiens.v79)
 ################
 # Load list of functions 
-################
-
-################
-# Functions for probe selection
 ################
 
 ################
