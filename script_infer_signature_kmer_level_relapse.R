@@ -11,7 +11,6 @@ set.seed(12678)
 # Load libraries
 ################
 library(data.table)
-library(edgeR)
 ################
 # Load list of functions 
 ################
@@ -20,9 +19,9 @@ source("useful_functions.R")
 ## scripts
 #######################################################################
 
-# Discovery data using top 100 NB10 gene and contig
+# Discovery data using top 500 contigs
 
-topContig <- "Data_discovery/top2k_contig_merge_norm.nb5.out"
+topContig <- "Data_discovery/top500_contig_merge_norm.nb5.out"
 sampleTCGA <-"Data_discovery/sample_conditions.tsv"
 
 # Validation ICGC data
@@ -36,10 +35,9 @@ kmerStelloo <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_data_val
 totalKmersStelloo <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Prostate_data_validation/Stello_data/Result_kamrat_3_5/Contig_level/Total_kmer/sum_counts.tsv"
 
 NUM_RUNS=100
-nKeep = 500
 
 # Directory to store result
-dir.store <- paste0("Result_article/kmer_level/", "Elastic")
+dir.store <- paste0("Result_article/Risk/kmer_level")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 normalizeContig <-function(validCountPath, libSizePath){
