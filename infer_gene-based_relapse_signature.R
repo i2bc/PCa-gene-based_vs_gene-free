@@ -19,18 +19,19 @@ source("useful_functions.R")
 ## scripts
 #######################################################################
 
-# Discovery data using top 100 NB10 gene and contig
+# Discovery data using top 500 NB5 gene and contig
+dir.data <- "Data_discovery/Relapse/"
 
-topGene <-"Data_discovery/Relapse/top500_TCGA_gene_norm.nb5.out"
-sampleTCGA <-"Data_discovery/Relapse/sample_conditions.tsv"
+topGene <- paste0( dir.data, "top500_TCGA_gene_norm.nb5.out"
+sampleTCGA <- paste0( dir.data, "sample_conditions.tsv"
 
 # Validation ICGC data
-sampleICGC <- "Data_validation/Relapse/sample_cond_icgc.tsv"
-geneICGC <- "Data_validation/Relapse/gene-norm-ICGC-Relapse-2-2.tsv"
+sampleICGC <- paste0( dir.data, "sample_cond_icgc.tsv"
+geneICGC <- paste0( dir.data, "gene-norm-ICGC-Relapse-2-2.tsv"
 
 # Validation Stello data
-sampleStelloo <- "Data_validation/Relapse/sample_cond_stelloo.tsv"
-geneStelloo <- "Data_validation/Relapse/gene-filter-norm-Stello-Relapse-3-5.tsv"
+sampleStelloo <- paste0( dir.data, "sample_cond_stelloo.tsv"
+geneStelloo <- paste0( dir.data, "gene-filter-norm-Stello-Relapse-3-5.tsv"
 
 NUM_RUNS=100
 
