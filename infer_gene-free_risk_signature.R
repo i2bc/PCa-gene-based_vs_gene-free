@@ -11,7 +11,6 @@ set.seed(12678)
 # Load libraries
 ################
 library(data.table)
-library(edgeR)
 ################
 # Load list of functions 
 ################
