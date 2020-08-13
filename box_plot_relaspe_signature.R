@@ -19,8 +19,8 @@ library(ggplot2)
 #######################################################################
 
 # Directory to store result
-dir.storeGene <- paste0("Result_article/Relapse/gene_based/")
-dir.storeCtg <- paste0("Result_article/Relapse/gene_free/")
+dir.storeGene <- paste0("Result_infer_signature/Relapse/gene_based/")
+dir.storeCtg <- paste0("Result_infer_signature/Relapse/gene_free/")
 
 # File store data 
 gene_discover_path = paste0( dir.storeGene, "data-sig-gene-tcga.tsv")
