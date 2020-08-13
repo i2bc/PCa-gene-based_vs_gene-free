@@ -35,7 +35,7 @@ totalKmers <- paste0(dir.validation, "sum_counts.tsv")
 NUM_RUNS=100
 
 # Directory to store result
-dir.store <- paste0("Result_article/Risk/gene_free")
+dir.store <- paste0("Result_infer_signature/Risk/gene_free")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samplesConditionValidPath, numruns){
