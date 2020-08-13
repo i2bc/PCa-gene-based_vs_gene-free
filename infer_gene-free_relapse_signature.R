@@ -22,7 +22,7 @@ source("useful_functions.R")
 # Discovery data using top 500 contigs
 dir.discovery <- "Data_discovery/Relapse/"
 
-topContig <- paste0(dir.discovery, "top500_contig_merge_norm.nb5.out")
+topContig <- paste0(dir.discovery, "top500_contig_merge_norm.nb5.tsv")
 sampleTCGA <- paste0(dir.discovery, "sample_conditions.tsv")
 
 # Validation ICGC data
@@ -40,7 +40,7 @@ totalKmersStelloo <- paste0(dir.validation, "sum_counts.tsv")
 NUM_RUNS=100
 
 # Directory to store result
-dir.store <- paste0("Result_article/Relapse/gene_free")
+dir.store <- paste0("Result_infer_signature/Relapse/gene_free")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 ############################################################################################
 evaluate_contig <- function(ctgMappDis, dataSigDis, sigContigDis, sigContigDisPath, dataValidPath, samplesConditionValidPath, modeValid){
