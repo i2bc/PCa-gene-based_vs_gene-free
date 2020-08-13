@@ -22,13 +22,13 @@ source("useful_functions.R")
 # Discovery data using top 500 NB5 genes
 dir.discovery <- "Data_discovery/Risk/"
 
-topGene <- paste0( dir.discovery, "top500_TCGA_gene_norm.nb5.out"
-sampleTCGA <- paste0( dir.discovery, "sample_conditions.tsv"
+topGene <- paste0(dir.discovery, "top500_TCGA_gene_norm.nb5.out")
+sampleTCGA <- paste0(dir.discovery, "sample_conditions.tsv")
 
 # Validation data
 dir.validation <- "Data_validation/Risk/"		   
-sampleICGC <- paste0( dir.validation, "sample_conditions.tsv"
-geneICGC <- paste0( dir.validation,"gene-counts-ICGC148-LRHR.norm.tsv"
+sampleICGC <- paste0(dir.validation, "sample_conditions.tsv")
+geneICGC <- paste0(dir.validation,"gene-counts-ICGC148-LRHR.norm.tsv")
 
 NUM_RUNS=100
 
