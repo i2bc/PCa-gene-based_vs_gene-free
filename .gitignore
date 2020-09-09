@@ -1,0 +1,12 @@
+*.tsv
+*.tsv.gz
+*.o 
+*.swp
+*.dSYM
+.DS_Store
+.vscode/
+bin/
+test_data/
+test/
+kamrat-simg/
+Makefile
