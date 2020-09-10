@@ -1,4 +1,6 @@
-# PCa-gene-based vs gene-free Comparison
+# PCa Gene-based vs Gene-free Comparison
+
+## R scripts
 
 Scripts for reproducing results of "A Comparative Analysis of Reference-Free and Conventional Transcriptome Signatures for Prostate Cancer Prognosis".
 
@@ -20,7 +22,7 @@ All four scripts starts from a count table in the Discovery Set (TCGA-PRAD cohor
 7. useful_functions.R: collection of functions that are used for infer signature in both tumor risk and relapse models.
 
 
-## KaMRaT Usage
+## KaMRaT
 
 KaMRaT means "k-mer Matrix Reduction Toolbox", or "k-mer Matrix, Really Tremendous !".
 
@@ -68,13 +70,13 @@ If not provided, all columns apart from the first one in the k-mer count matrix 
 
 ### kamratMerge
 
-Merge Usage
+Merge usage
 
 ```text
 kamratMerge [-h] [-k k_length] [-m min_overlap] [-nxj] [-d sample_info] [-i interv_method] [-q quant_mode] [-t tmp_dir] kmer_count_path
 ```
 
-Merge Parameters
+Merge parameters
 
 ```text
 -h         Print the helper
@@ -88,13 +90,11 @@ Merge Parameters
 -q STRING  Quantification mode (rep, mean) [rep]
            the column name for selecting representative k-mer can be precised after ':' symbol, e.g. rep:pvalue
            if no column name precised, the firstly input k-mer of a contig will be taken as representative k-mer
--j         Adjacent k-mer comparison (valid only with intervention) [false]
-           if absent, the counts of representative k-mers or mean counts are taken according to quantification mode
 -x         Query on disk [false]
 -t STRING  Temporary directory [./]
 ```
 
-Intervention Method
+Intervention method
 
 ```text
 none: without any intervention, only consider overlap for extension
@@ -103,13 +103,13 @@ mac: mean absolute contrast, mac(k1, k2) = mean(abs(k1-k2)./(k1+k2)), where k1, 
 
 ### kamratNorm
 
-Norm Usage
+Norm usage
 
 ```text
 kamratNorm -b CHAR [-d STRING] [-T STRING] STRING
 ```
 
-Norm Parameters
+Norm parameters
 
 ```text
 -h         Print the helper
@@ -120,13 +120,13 @@ Norm Parameters
 
 ### kamratReduce
 
-Reduce Usage
+Reduce usage
 
 ```text
 kamratReduce [-d samp_info_path -m eval_method:fold_num -s sort_mode -N top_num -T transf_mode -C count_offset] kmer_count_path
 ```
 
-Reduce Parameters
+Reduce parameters
 
 ```text
 -h           Print the helper
@@ -141,7 +141,7 @@ Reduce Parameters
 -a INT       Accepted minimum count abundance for counting sample recurrence
 ```
 
-Reduce Evaluation Methods
+Reduce evaluation methods
 
 ```text
 nb           Naive Bayes classification between conditions, the fold number may be precised after ':' (if not precised, fold_num=2)
@@ -157,7 +157,7 @@ lfc:median   Log2 fold change by group median
 user:name    User-defined method, where name indicates a column in the k-mer count table
 ```
 
-Sorting Modes
+Sorting modes
 
 ```text
 dec          Sorting by decreasing order                              (as default for nb, lr, sd, rsd, user:name)
