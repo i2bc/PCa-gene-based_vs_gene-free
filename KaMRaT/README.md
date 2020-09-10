@@ -66,8 +66,6 @@ Merge Parameters
 -q STRING  Quantification mode (rep, mean) [rep]
            the column name for selecting representative k-mer can be precised after ':' symbol, e.g. rep:pvalue
            if no column name precised, the firstly input k-mer of a contig will be taken as representative k-mer
--j         Adjacent k-mer comparison (valid only with intervention) [false]
-           if absent, the counts of representative k-mers or mean counts are taken according to quantification mode
 -x         Query on disk [false]
 -t STRING  Temporary directory [./]
 ```
