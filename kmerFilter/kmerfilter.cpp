@@ -139,8 +139,8 @@ int main(int argc, char **argv)
             with_header = false;
             break;
         case 'h':
-            std::cerr << "========= kamratMask helper =========" << std::endl;
-            std::cerr << "Usage: kamratMask [-nlN] [-k k_length] -f filter_path kmer_count_table_path > output_sub_table_path" << std::endl << std::endl;
+            std::cerr << "========= kmerfilter helper =========" << std::endl;
+            std::cerr << "Usage: kmerfilter [-n] [-k k_length] [-l] -f filter_path kmer_count_table_path > output_sub_table_path" << std::endl << std::endl;
             std::cerr << "Parameter:    -n         if the k-mers are generated from unstranded RNA-seq data" << std::endl;
             std::cerr << "              -k INT     the length of k-mers [31]" << std::endl;
             std::cerr << "              -l         if to REMOVE the k-mers in filter list (to keep \"liquid\" in real filtering experiment)" << std::endl;

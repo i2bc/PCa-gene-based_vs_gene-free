@@ -4,7 +4,6 @@ KaMRaT means "k-mer Matrix Reduction Toolbox", or "k-mer Matrix, Really Tremendo
 
 The toolbox contains for now modules below:
 
-- kamratMask which takes a k-mer count matrix as input, and selects/removes the k-mers in a given fasta file
 - kamratMerge which takes a k-mer count matrix as input, and merge k-mers into longer contigs according to their overlap
 - kamratNorm which takes a k-mer count matrix as input, and normalize k-mer counts
 - kamratReduce which takes a k-mer count matrix as input, and evaluates the performance of each k-mer according to different metrics
@@ -35,24 +34,6 @@ The sample-info file is given after the option ```-d```. This file aims to indic
 - if the file contains a second column, it conrresponds to condition for each sample
 
 This sample-info file option can be omitted. In this case, all columns apart from the first one in the k-mer count matrix are considered as samples.
-
-## kamratMask
-
-Mask usage:
-
-```text
-kamratMask [-h] [-n] [-k k_length] [-l] -f mask_path kmer_count_matrix_path
-```
-
-Mask parameter:
-
-```text
--n         if the k-mers are generated from unstranded RNA-seq data
--k INT     the length of k-mers [31]
--l         if to REMOVE the k-mers in filter list (to keep "liquid" in real filtering experiment)
-               do not put this parameter if to SELECT the k-mers in filter list (to keep "solid" in real filtering experiment)
--f STRING  the mask file path, could be either a fasta file or a list WITHOUT header
-```
 
 ## kamratMerge
 
