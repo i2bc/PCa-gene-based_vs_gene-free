@@ -5,7 +5,7 @@ The kmerFilter tool aims to select/remove a list of k-mers in a k-mer count tabl
 Usage: 
 
 ```text
-./kmerfilter [-n] [-k k\_length] [-l] -f filter\_list\_path kmer\_count\_table\_path
+./kmerfilter [-n] [-k k_length] [-l] -f filter_list_path kmer_count_table_path
 ```
 
 Parameter:
@@ -15,9 +15,8 @@ Parameter:
 -k INT     the length of k-mers [31]
 -l         if to REMOVE the k-mers in filter list (to keep "liquid" in real filtering experiment)
                do not put this parameter if to SELECT the k-mers in filter list (to keep "solid" in real filtering experiment)
--f STRING  the mask file path, could be either a fasta file or a list WITHOUT header
+-f STRING  the filter file path, could be either a fasta file or a list WITHOUT header
 ```
-
 
 There are 2 principal modes: keep solid and keep liquid.
 
