@@ -32,8 +32,8 @@ The toolbox contains for now the modules below:
 - kamratNorm which takes a k-mer count table as input, and normalize k-mer counts
 - kamratReduce which takes a k-mer count table as input, and evaluates the performance of each k-mer according to different metrics
 
-For more information, please enter into the [KaMRaT folder](https://github.com/i2bc/PCa-gene-based_vs_gene-free/tree/master/KaMRaT).
+For more information, please check inside the [KaMRaT folder](https://github.com/i2bc/PCa-gene-based_vs_gene-free/tree/master/KaMRaT).
 
 ## kmerFilter
 
-The kmerFilter tool aims to select/remove a list of k-mers in a k-mer count table. For detailed usage, please check [kmerFilter folder](https://github.com/i2bc/PCa-gene-based_vs_gene-free/tree/master/kmerFilter)
+The kmerFilter tool aims to select/remove a list of k-mers in a k-mer count table. For detailed usage, please check inside [kmerFilter folder](https://github.com/i2bc/PCa-gene-based_vs_gene-free/tree/master/kmerFilter).
