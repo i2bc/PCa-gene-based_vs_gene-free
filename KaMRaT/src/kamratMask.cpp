@@ -139,15 +139,14 @@ int main(int argc, char **argv)
             with_header = false;
             break;
         case 'h':
-            std::cerr << "========= kmerFilter helper =========" << std::endl;
-            std::cerr << "Usage: kmerFilter [-nlN] [-k k_length] -f filter_path kmer_count_table_path > output_sub_table_path" << std::endl << std::endl;
+            std::cerr << "========= kamratMask helper =========" << std::endl;
+            std::cerr << "Usage: kamratMask [-nlN] [-k k_length] -f filter_path kmer_count_table_path > output_sub_table_path" << std::endl << std::endl;
             std::cerr << "Parameter:    -n         if the k-mers are generated from unstranded RNA-seq data" << std::endl;
             std::cerr << "              -k INT     the length of k-mers [31]" << std::endl;
             std::cerr << "              -l         if to REMOVE the k-mers in filter list (to keep \"liquid\" in real filtering experiment)" << std::endl;
             std::cerr << "                         do not put this parameter if to SELECT the k-mers in filter list " 
                       << "(to keep \"solid\" in real filtering experiment)" << std::endl;
             std::cerr << "              -f STRING  the filter list path, could be either a fasta file or a list WITHOUT header" << std::endl;
-            std::cerr << "              -N         if your kmer_count_table doesn't have the header line, please put this parameter" << std::endl;
             exit(EXIT_SUCCESS);
         }
     }
