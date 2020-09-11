@@ -23,6 +23,4 @@ There are 2 principal modes: keep solid and keep liquid.
 - keep solid mode (WITHOUT parameter -l) is for the case where we want to KEEP the k-mers from filter\_list. It is in same logic as mask step in DE-kupl
 - keep liquid mode (WITH parameter -l) is for the case where we want to REMOVE the k-mers from filter\_list.
 
-For more help, please check ./kmerFilter -h
-
 For compilation: simply type ```make``` in kmerFilter folder.
