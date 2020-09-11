@@ -8,7 +8,7 @@ The toolbox contains for now modules below:
 - kamratNorm which takes a k-mer count matrix as input, and normalize k-mer counts
 - kamratReduce which takes a k-mer count matrix as input, and evaluates the performance of each k-mer according to different metrics
 
-## Prerequisite
+## Prerequisite & Compilation
 
 The kamratReduce module is dependent on MLPack library. It could be installed from [conda cloud](https://anaconda.org/conda-forge/mlpack).
 
@@ -18,7 +18,7 @@ After installation from conda, please add the following line into your ```.bashr
 export LD_LIBRARY_PATH="/path_to_conda_env/mlpack/lib:$LD_LIBRARY_PATH"
 ```
 
-For compiling the source, you can use ```compile.bash``` in the root directory of KaMRaT:
+For compiling the source code, you can use ```compile.bash``` in the root directory of KaMRaT:
 
 ```bash
 bash compile.bash /path_to_conda_environment_for_MLPack
