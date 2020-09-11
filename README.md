@@ -28,6 +28,7 @@ KaMRaT means "k-mer Matrix Reduction Toolbox", or "k-mer Matrix, Really Tremendo
 
 The toolbox contains for now the modules below:
 
+- kamratMask which takes a k-mer count table as input, and selects/removes the k-mers in a given fasta file
 - kamratMerge which takes a k-mer count table as input, and merge k-mers into longer contigs according to their overlap
 - kamratNorm which takes a k-mer count table as input, and normalize k-mer counts
 - kamratReduce which takes a k-mer count table as input, and evaluates the performance of each k-mer according to different metrics
