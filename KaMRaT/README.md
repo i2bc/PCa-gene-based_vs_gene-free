@@ -41,7 +41,7 @@ This sample-info file option can be omitted. In this case, all columns apart fro
 Mask usage:
 
 ```text
-kmerFilter [-h] [-n] [-k k_length] [-l] -f filter_path kmer_count_matrix_path
+kamratMask [-h] [-n] [-k k_length] [-l] -f mask_path kmer_count_matrix_path
 ```
 
 Mask parameter:
@@ -51,7 +51,7 @@ Mask parameter:
 -k INT     the length of k-mers [31]
 -l         if to REMOVE the k-mers in filter list (to keep "liquid" in real filtering experiment)
                do not put this parameter if to SELECT the k-mers in filter list (to keep "solid" in real filtering experiment)
--f STRING  the filter list path, could be either a fasta file or a list WITHOUT header
+-f STRING  the mask file path, could be either a fasta file or a list WITHOUT header
 ```
 
 ## kamratMerge
