@@ -32,7 +32,14 @@ sampleICGC <- paste0(dir.validation, "sample_conditions.tsv")
 kmerICGC <- paste0(dir.validation, "raw-counts.tsv.gz")
 totalKmers <- paste0(dir.validation, "sum_counts.tsv")
 
+# Number of time for sampling
 NUM_RUNS=100
+
+# Directory of kmerFilter tool 
+dir.kmerFilter <- "kmerFilter/kmerfilter"
+		     
+# Directory of BLAST database
+dir.blastDB <- "/store/EQUIPES/SSFA/Index/Gencode/gencode.v34.transcripts.fa"
 
 # Directory to store result
 dir.store <- paste0("Result_infer_signature/Risk/gene_free")
@@ -90,7 +97,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   assignCtg <- as.data.frame(cbind(paste0("ctg_",seq(1:length(sigTCGA))), sigTCGA))
   names(assignCtg) <- c("Alias", "contig")
   # Call blast command
-  cmdRun <- cmdRun <- paste0("bash -c \"blastn -db /store/EQUIPES/SSFA/Index/Gencode/gencode.v34.transcripts.fa -query ",
+  cmdRun <- cmdRun <- paste0("bash -c \"blastn -db ", dir.blastDB, " -query ",
                    dir.store, "/sig-contig-tcga.fa -evalue 1e-3 -max_target_seqs 1 -outfmt 6 -max_hsps 1 -word_size 10 ",
                    " > ", dir.store,"/sig-contig-tcga-geneName.tsv\"")
   system(cmdRun)    
@@ -162,7 +169,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   ########## finding signature in validation set ##############
     
   # Call the sript infer
-  cmdRun <- paste0("bash -c \"/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Haoliang_Find_Kmer/kmer-filter/kmerFilter -n -k 31 -f ",
+  cmdRun <- paste0("bash -c \"", dir.kmerFilter, " -n -k 31 -f ",
                    dir.store, "/sig-contig-tcga.tsv <(zcat ", dataValidPath ,") > ", dir.store,"/sig-contig-valid-ICGC.tsv\"")
   system(cmdRun)
   
