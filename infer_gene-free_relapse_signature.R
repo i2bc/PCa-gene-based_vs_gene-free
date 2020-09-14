@@ -37,8 +37,15 @@ sampleStelloo <- paste0(dir.validation, "sample_conditions.tsv")
 kmerStelloo <- paste0(dir.validation, "raw-counts-Stello-Relapse-3-3.tsv.gz")
 totalKmersStelloo <- paste0(dir.validation, "sum_counts.tsv")
 
+# Number of time for sampling
 NUM_RUNS=100
 
+# Directory of kmerFilter tool 
+dir.kmerFilter <- "kmerFilter/kmerfilter"
+		     
+# Directory of BLAST database
+dir.blastDB <- "/store/EQUIPES/SSFA/Index/Gencode/gencode.v34.transcripts.fa"
+		     
 # Directory to store result
 dir.store <- paste0("Result_infer_signature/Relapse/gene_free")
 dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
@@ -46,7 +53,7 @@ dir.create(file.path(dir.store), showWarnings = FALSE, recursive = TRUE)
 evaluate_contig <- function(ctgMappDis, dataSigDis, sigContigDis, sigContigDisPath, dataValidPath, samplesConditionValidPath, modeValid){
   
   # Call the sript infer
-  cmdRun <- paste0("bash -c \"/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Haoliang_Find_Kmer/kmer-filter/kmerFilter -n -k 31 -f ",
+  cmdRun <- paste0("bash -c \"", dir.kmerFilter, " -n -k 31 -f ",
                    sigContigDisPath, " <(zcat ", dataValidPath ,") > ", dir.store,"/sig-contig-valid-", modeValid, ".tsv\"")
   system(cmdRun)
   
@@ -221,7 +228,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, numruns){
   names(assignCtg) <- c("Alias", "contig")    
   
   # Call blast command
-  cmdRun <- paste0("bash -c \"blastn -db /store/EQUIPES/SSFA/Index/Gencode/gencode.v34.transcripts.fa -query ",
+  cmdRun <- paste0("bash -c \"blastn -db ", dir.blastDB, " -query ",
                    dir.store, "/sig-contig-tcga.fa -evalue 1e-3 -max_target_seqs 1 -outfmt 6 -max_hsps 1 -word_size 10 ",
                    #   '|awk -F"\t"', "'{print $1" , '"\t"', "$2}'", '|awk -F"|"', " '{print $1",' "\t" ', "$6}'",'|awk -F"\t"'," '{print $1",' "\t"', " $3}'",
                    " > ", dir.store,"/sig-contig-tcga-geneName.tsv\"")
