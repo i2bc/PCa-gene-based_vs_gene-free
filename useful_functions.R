@@ -14,10 +14,15 @@ library(glmnet)
 library(caret)
 library(precrec)
 library(parallel)
-library(edgeR)
 library(EnsDb.Hsapiens.v79)
+library(MLmetrics)
+library(edgeR)
 ################
 # Load list of functions 
+################
+
+################
+# Functions for probe selection
 ################
 
 ################
@@ -195,30 +200,57 @@ takeDataReturnAUC<- function(frameTrain, frameTest, absentContig, status){
   #   List coefficents for each probe in the signature
   
   data.train <- as.data.frame(frameTrain)
-  
   data.test <- as.data.frame(frameTest)
   
 
-  # Train model 
+  # Set up control function for training 
   ctrl <- trainControl(method = "repeatedcv",
                        number = 10,
                        repeats = 20,
                        classProbs = TRUE,
                        summaryFunction = twoClassSummary,
                        savePredictions = TRUE)
-                      
+  
   
   # Use glm method in caret package
+  set.seed(5627)
   glmFit <- train(condition ~ ., data = data.train,
                     method = "glm",
                     metric = "ROC",
                     family = "binomial",
                     preProc = c("center", "scale"),
-                    trControl = ctrl)  
+                    trControl = ctrl)
   
+  
+  # Use the same seed to ensure same cross-validation splits
+  ctrl$seeds <- glmFit$control$seeds
+  
+  ctrl$sampling <- "down"
+  down_fit <- train(condition ~ ., data = data.train,
+                   method = "glm",
+                   metric = "ROC",
+                   family = "binomial",
+                   preProc = c("center", "scale"),
+                   trControl = ctrl)  
+  
+  ctrl$sampling <- "up"
+  up_fit <- train(condition ~ ., data = data.train,
+                  method = "glm",
+                  metric = "ROC",
+                  family = "binomial",
+                  preProc = c("center", "scale"),
+                  trControl = ctrl)  
+
+ 
   #Roc AUC for TCGA tranning dataset
-  aucMeanTCGA <- round(mean(glmFit$resample$ROC), 3)
-  aucSdTCGA <- round(sd(glmFit$resample$ROC), 3)
+  aucMeanOrg <- round(mean(glmFit$resample$ROC), 3)
+  aucSdOrg<- round(sd(glmFit$resample$ROC), 3)
+  
+  aucMeanDown <- round(mean(down_fit$resample$ROC), 3)
+  aucSdDown<- round(sd(down_fit$resample$ROC), 3)
+  
+  aucMeanUp <- round(mean(up_fit$resample$ROC), 3)
+  aucSdUp<- round(sd(up_fit$resample$ROC), 3)
   
   # Set coefficent of absent contig =0
   if(length(absentContig)!=0){
@@ -232,6 +264,8 @@ takeDataReturnAUC<- function(frameTrain, frameTest, absentContig, status){
     for (contig in absentContig){
       
       glmFit$finalModel$coefficients[contig] = 0
+      down_fit$finalModel$coefficients[contig] = 0
+      up_fit$finalModel$coefficients[contig] = 0
       
     }
     
@@ -240,28 +274,58 @@ takeDataReturnAUC<- function(frameTrain, frameTest, absentContig, status){
   # Predition for test data
   if(status == "risk"){
 	pred = predict(glmFit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
+	pred_down = predict(down_fit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
+	pred_up = predict(up_fit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
   }
   if(status == "relapse"){
 	  pred = predict(glmFit, data.test[,-1, drop = FALSE], type = "prob")[, "No"]
+	  pred_down = predict(down_fit, data.test[,-1, drop = FALSE], type = "prob")[, "No"]
+	  pred_up = predict(up_fit, data.test[,-1, drop = FALSE], type = "prob")[, "No"]
   }
   
   # Calculate auc for ROC curve
   resAUC <- auc(evalmod(scores = pred, labels = data.test$condition))
+  resAUC_down <- auc(evalmod(scores = pred_down, labels = data.test$condition))
+  resAUC_up <- auc(evalmod(scores = pred_up, labels = data.test$condition))
   
   rocAUC <- round(resAUC$aucs[1], 3)
+  prAUC <- round(resAUC$aucs[2], 3)
+  
+  rocAUC_down <- round(resAUC_down$aucs[1], 3)
+  prAUC_down <- round(resAUC_down$aucs[2], 3)
+  
+  rocAUC_up <- round(resAUC_up$aucs[1], 3)
+  prAUC_up <- round(resAUC_up$aucs[2], 3)
   
   if(rocAUC<0.5){ # Reverse roc value in case it lower than 0.5
     
     rocAUC = 1 - rocAUC
     
   }
-  # Variable importance
+
+  if(rocAUC_down<0.5){ # Reverse roc value in case it lower than 0.5
+	    
+	    rocAUC_down = 1 - rocAUC_down
+    
+  } 
+
+  if(rocAUC_up<0.5){ # Reverse roc value in case it lower than 0.5
+	    
+	    rocAUC_up = 1 - rocAUC_up
+    
+  }  
+  # Save predicted scores 
+  scores <- pred
   
-  return(list(aucMeanTCGA, aucSdTCGA, rocAUC, varImp(glmFit)))
+  # Save observed labels
+  label <- data.test$condition
+  
+  return(list(aucMeanOrg, aucSdOrg, aucMeanDown, aucSdDown, aucMeanUp, aucSdUp, 
+              rocAUC, prAUC ,rocAUC_down, prAUC_down, rocAUC_up, prAUC_up))
 }
 
 ################
-## F) Function to take gene name from gene ensembl
+## G) Function to take gene name from gene ensembl
 ################
 fromGeneIDtakeGenName <- function(geneEnsembl){
   # Infer gene symbol from gene ensembl 
@@ -276,7 +340,146 @@ fromGeneIDtakeGenName <- function(geneEnsembl){
   return (geneAnno)
 }
 ################
-## G) Function to CBP normalize for kmers are found in validation set
+## G) Function to take gene name from gene ensembl
+################
+takeDataReturnPR<- function(frameTrain, frameTest, absentContig, status){
+  # Calculate auc of signature 
+  #
+  # Args:
+  #   frameTrain: Data frame containes selected probes in training set
+  #   frameTest : Data frame containes selected probes in test set
+  #   absentContig : List of absence contig in test set
+  #
+  # Results:
+  #   AUC ROC curve in test set
+  #   List coefficents for each probe in the signature
+  
+  data.train <- as.data.frame(frameTrain)
+  data.test <- as.data.frame(frameTest)
+  
+  
+  # Set up control function for training 
+  ctrl <- trainControl(method = "repeatedcv",
+                       number = 10,
+                       repeats = 20,
+                       classProbs = TRUE,
+                       summaryFunction = prSummary,
+                       savePredictions = TRUE)
+  
+  
+  # Use glm method in caret package
+  set.seed(5678)
+  glmFit <- train(condition ~ ., data = data.train,
+                  method = "glm",
+                  metric = "AUC",
+                  family = "binomial",
+                  preProc = c("center", "scale"),
+                  trControl = ctrl)
+  
+  
+  # Use the same seed to ensure same cross-validation splits
+  ctrl$seeds <- glmFit$control$seeds
+  
+  ctrl$sampling <- "down"
+  down_fit <- train(condition ~ ., data = data.train,
+                    method = "glm",
+                    metric = "AUC",
+                    family = "binomial",
+                    preProc = c("center", "scale"),
+                    trControl = ctrl)  
+  
+  ctrl$sampling <- "up"
+  up_fit <- train(condition ~ ., data = data.train,
+                  method = "glm",
+                  metric = "AUC",
+                  family = "binomial",
+                  preProc = c("center", "scale"),
+                  trControl = ctrl)  
+  
+  
+  #Roc AUC for TCGA tranning dataset
+  aucMeanOrg <- round(mean(glmFit$resample$AUC), 3)
+  aucSdOrg<- round(sd(glmFit$resample$AUC), 3)
+  
+  aucMeanDown <- round(mean(down_fit$resample$AUC), 3)
+  aucSdDown<- round(sd(down_fit$resample$AUC), 3)
+  
+  aucMeanUp <- round(mean(up_fit$resample$AUC), 3)
+  aucSdUp<- round(sd(up_fit$resample$AUC), 3)
+  
+  # Set coefficent of absent contig =0
+  if(length(absentContig)!=0){
+    
+    for (i in 1:length(absentContig)){
+      if(grepl("-", absentContig[i], fixed = TRUE)){
+        absentContig[i] = paste0("`\\`", absentContig[i], "\\``")
+      }
+    }
+    
+    for (contig in absentContig){
+      
+      glmFit$finalModel$coefficients[contig] = 0
+      down_fit$finalModel$coefficients[contig] = 0
+      up_fit$finalModel$coefficients[contig] = 0
+      
+    }
+    
+  }
+  
+  # Predition for test data
+  if(status == "risk"){
+    pred = predict(glmFit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
+    pred_down = predict(down_fit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
+    pred_up = predict(up_fit, data.test[,-1, drop = FALSE], type = "prob")[, "LR"]
+  }
+  if(status == "relapse"){
+    pred = predict(glmFit, data.test[,-1, drop = FALSE], type = "prob")[, "No"]
+    pred_down = predict(down_fit, data.test[,-1, drop = FALSE], type = "prob")[, "No"]
+    pred_up = predict(up_fit, data.test[,-1, drop = FALSE], type = "prob")[, "No"]
+  }
+  
+  # Calculate auc for ROC curve
+  resAUC <- auc(evalmod(scores = pred, labels = data.test$condition))
+  resAUC_down <- auc(evalmod(scores = pred_down, labels = data.test$condition))
+  resAUC_up <- auc(evalmod(scores = pred_up, labels = data.test$condition))
+  
+  rocAUC <- round(resAUC$aucs[1], 3)
+  prAUC <- round(resAUC$aucs[2], 3)
+  
+  rocAUC_down <- round(resAUC_down$aucs[1], 3)
+  prAUC_down <- round(resAUC_down$aucs[2], 3)
+  
+  rocAUC_up <- round(resAUC_up$aucs[1], 3)
+  prAUC_up <- round(resAUC_up$aucs[2], 3)
+  
+  if(rocAUC<0.5){ # Reverse roc value in case it lower than 0.5
+    
+    rocAUC = 1 - rocAUC
+    
+  }
+
+  if(rocAUC_down<0.5){ # Reverse roc value in case it lower than 0.5
+		    
+    rocAUC_down = 1 - rocAUC_down
+    
+  } 
+
+  if(rocAUC_up<0.5){ # Reverse roc value in case it lower than 0.5
+		    
+    rocAUC_up = 1 - rocAUC_up
+    
+  }  
+
+  # Save predicted scores 
+  scores <- pred
+  
+  # Save observed labels
+  label <- data.test$condition
+  
+  return(list(aucMeanOrg, aucSdOrg, aucMeanDown, aucSdDown, aucMeanUp, aucSdUp, 
+              rocAUC, prAUC ,rocAUC_down, prAUC_down, rocAUC_up, prAUC_up))
+}
+
 ################
 normalizeContig <-function(validCountPath, libSizePath){
   # CBP normalization for kmer are found in validation set
@@ -286,7 +489,7 @@ normalizeContig <-function(validCountPath, libSizePath){
   #  libSizePath: Path to store total of kmers for each sample in validation set
   # Results:
   # Dataframe store normalized kmer counts are found in validation set
-	
+  
   # Dataframe stores kmers count that are found in validation set
   countKmerValid <- as.data.frame(fread(validCountPath, sep="\t", header = TRUE))
   
