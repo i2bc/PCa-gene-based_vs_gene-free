@@ -1,6 +1,6 @@
 ################
 # Author : Thi Ngoc Ha Nguyen
-# Date   : 13/07/2020
+# Date   : 04/10/2020
 # Email  : thi-ngoc-ha.nguyen@i2bc.paris-saclay.fr
 ################
 
@@ -43,7 +43,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   countTopProbe <- as.data.frame(fread(topProbesPath, sep="\t", header = TRUE))
   
   countTopProbe <- data.frame(row.names = countTopProbe$feature, countTopProbe[,-c(1,2)], check.names=F)
-
+  
   ########## processing of conditions ##############
   samplesConditionDis<-as.data.frame(fread(samplesConditionDisPath,sep="\t", header= FALSE ,check.names=F))
   names(samplesConditionDis)<-c("Sample","condition")
@@ -71,7 +71,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   th_lasso = 0.5
   
   sigTCGA <- extractSignatureStb(dataModel, thres = th_lasso)
-
+  
   # From gene symbol to gene name
   signature.idsym <- fromGeneIDtakeGenName(sigTCGA)
   signature.save <- signature.idsym$SYMBOL
@@ -86,7 +86,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   # dataframe of signature in TCGA dataset
   dataSigTCGA <- dataTCGA[,c("condition",sigTCGA)]
   names(dataSigTCGA) <- c("condition", signature.save)
-
+  
   ########## finding signature in validation set ##############
   # dataframe of signature in ICGC dataset
   dataValid <- as.data.frame(fread(dataValidPath, sep="\t", header = TRUE))
@@ -115,25 +115,39 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   names(dataSigICGC) <- c("condition", signature.save)
   
   resSign <- takeDataReturnAUC(frameTrain = dataSigTCGA, frameTest = dataSigICGC, absentContig = c(), status = "risk")
-
-  finalTab <- rbind(resSign[[3]], resSign[[1]], resSign[[2]])
-  rownames(finalTab) <- c("AUC signature gene in ICGC", 
-			 "Mean AUC cross-valid (TCGA)", "SD AUC cross-valid (TCGA)")
+  
+  finalTab <- rbind(resSign[[1]], resSign[[2]], resSign[[3]], resSign[[4]],
+                    resSign[[5]], resSign[[6]], resSign[[7]], resSign[[8]],
+                    resSign[[9]], resSign[[10]], resSign[[11]], resSign[[12]])
+  rownames(finalTab) <- c( 
+    "Mean ROC_AUC cv (TCGA)", "SD ROC_AUC cv (TCGA)", 
+    "Mean ROC_AUC down cv (TCGA)", "SD ROC_AUC down cv (TCGA)",
+    "Mean ROCAUC up cv (TCGA)", "SD ROC_AUC up cv (TCGA)",
+    "ROC_AUC sig gene in ICGC", "PrAUC sig gene in ICGC",
+    "ROC_AUC down sig gene in ICGC", "PrAUC down sig gene in ICGC",
+    "ROC_AUC up sig gene in ICGC", "PrAUC up sig gene in ICGC")
   print(finalTab)
   
-  name.file <- paste0(dir.store, "/auc-sig-gene.tsv")
+  name.file <- paste0(dir.store, "/Roc_auc-sig-gene.tsv")
+  write.table(finalTab, file = name.file, quote = FALSE, row.name = TRUE, col.names = FALSE) 
+  
+  resSign <- takeDataReturnPR(frameTrain = dataSigTCGA, frameTest = dataSigICGC, absentContig = c(), status = "risk")
+  
+  finalTab <- rbind(resSign[[1]], resSign[[2]], resSign[[3]], resSign[[4]],
+                    resSign[[5]], resSign[[6]], resSign[[7]], resSign[[8]],
+                    resSign[[9]], resSign[[10]], resSign[[11]], resSign[[12]])
+  rownames(finalTab) <- c( 
+    "Mean PR_AUC cv (TCGA)", "SD PR_AUC cv (TCGA)", 
+    "Mean PR_AUC down cv (TCGA)", "SD PR_AUC down cv (TCGA)",
+    "Mean PR_AUC up cv (TCGA)", "SD PR_AUC up cv (TCGA)",
+    "ROC_AUC sig gene in ICGC", "PrAUC sig gene in ICGC",
+    "ROC_AUC down sig gene in ICGC", "PrAUC down sig gene in ICGC",
+    "ROC_AUC up sig gene in ICGC", "PrAUC up sig gene in ICGC")
+  print(finalTab)  
+  
+  name.file <- paste0(dir.store, "/PR-auc-sig-gene.tsv")
   write.table(finalTab, file = name.file, quote = FALSE, row.name = TRUE, col.names = FALSE)   
   
-  # Store important variable 
-  name.file <- paste0(dir.store, "/import-sig-gene.tsv")
-  importVar <- as.data.frame(resSign[[4]]$importance)
-  importVar$Gene <- rownames(resSign[[4]]$importance)
-  names(importVar) <- c("Overall", "Gene")
-  dataStore <- importVar[round(order(importVar$Overall, decreasing = T),4),]
-  print("Contribution of each gene in signature:")
-  print(dataStore[, c("Gene","Overall")])
-  write.table(dataStore[, c("Gene", "Overall")], file = name.file, sep = "\t", quote = FALSE, row.names = FALSE, col.names = TRUE)
-
   name.file <- paste0(dir.store, "/data-sig-gene-tcga.tsv")
   dataSaveTCGA <- dataTCGA[,c("Sample","condition",sigTCGA)]
   colnames(dataSaveTCGA) <- c("Sample", "condition", signature.save)
