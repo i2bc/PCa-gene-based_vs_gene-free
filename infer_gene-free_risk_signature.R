@@ -1,6 +1,6 @@
 ################
 # Author : Thi Ngoc Ha Nguyen
-# Date   : 13/07/2020
+# Date   : 04/10/2020
 # Email  : thi-ngoc-ha.nguyen@i2bc.paris-saclay.fr
 ################
 
@@ -36,8 +36,8 @@ totalKmers <- paste0(dir.validation, "sum_counts.tsv")
 NUM_RUNS=100
 
 # Directory of kmerFilter tool 
-dir.kmerFilter <- "kmerFilter/kmerfilter"
-		     
+dir.kmerFilter <- "/store/EQUIPES/SSFA/MEMBERS/thi-ngoc-ha.nguyen/Haoliang_Find_Kmer/kmer-filter/kmerFilter"
+
 # Directory of BLAST database
 dir.blastDB <- "/store/EQUIPES/SSFA/Index/Gencode/gencode.v34.transcripts.fa"
 
@@ -49,9 +49,9 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   
   # loading top 500 contigs in TCGA discovery dataset
   countTopProbe <- as.data.frame(fread(topProbesPath, sep="\t", header = TRUE))
-    
+  
   countTopProbe <- data.frame(row.names = countTopProbe$feature, countTopProbe[,-c(1:4)], check.names=F)    
-    
+  
   ########## processing of conditions ##############
   samplesConditionDis<-as.data.frame(fread(samplesConditionDisPath,sep="\t", header= FALSE ,check.names=F))
   names(samplesConditionDis)<-c("Sample","condition")
@@ -63,7 +63,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   for (i in 1:dim(countTopProbe)[2]){
     countTopProbe[,i] <- as.double(as.character(countTopProbe[,i]))
   }
-
+  
   countTopProbe$Sample <- row.names(countTopProbe)
   
   # Mapping count table and condition in TCGA
@@ -98,8 +98,8 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   names(assignCtg) <- c("Alias", "contig")
   # Call blast command
   cmdRun <- cmdRun <- paste0("bash -c \"blastn -db ", dir.blastDB, " -query ",
-                   dir.store, "/sig-contig-tcga.fa -evalue 1e-3 -max_target_seqs 1 -outfmt 6 -max_hsps 1 -word_size 10 ",
-                   " > ", dir.store,"/sig-contig-tcga-geneName.tsv\"")
+                             dir.store, "/sig-contig-tcga.fa -evalue 1e-3 -max_target_seqs 1 -outfmt 6 -max_hsps 1 -word_size 10 ",
+                             " > ", dir.store,"/sig-contig-tcga-geneName.tsv\"")
   system(cmdRun)    
   
   #Open file geneName
@@ -147,7 +147,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   
   name.file <- paste0(dir.store, "/sig-contig-genemap-tcga.tsv")
   write.table(contigMappSave, file = name.file, sep = "\t", quote = FALSE, row.names = FALSE, col.names = TRUE)   
-
+  
   # dataframe of signature in TCGA dataset
   dataSigTCGA <- dataTCGA[,c("condition",sigTCGA)]
   
@@ -156,18 +156,18 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   contigName <- as.data.frame(t(contigMapp[,-c(1)]))
   colnames(contigName) <- contigMapp$contig
   contigName = as.data.frame(contigName[, sigTCGA])
-
+  
   ctgNameDis = unname(unlist(contigName[1,]))
-
+  
   # Change the name of dataSigTCGA to mapping genenome
   names(dataSigTCGA) <- c("condition", ctgNameDis)  
-
+  
   name.file <- paste0(dir.store, "/data-sig-contig-tcga.tsv")
   dataSaveTCGA <- dataTCGA[,c("Sample","condition",sigTCGA)]
   colnames(dataSaveTCGA) <- c("Sample", "condition", ctgNameDis)
   write.table(dataSaveTCGA, file = name.file, sep = "\t", quote = FALSE, row.names = FALSE)
   ########## finding signature in validation set ##############
-    
+  
   # Call the sript infer
   cmdRun <- paste0("bash -c \"", dir.kmerFilter, " -n -k 31 -f ",
                    dir.store, "/sig-contig-tcga.tsv <(zcat ", dataValidPath ,") > ", dir.store,"/sig-contig-valid-ICGC.tsv\"")
@@ -221,7 +221,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   
   probesID <- rownames(dataValidRepre)
   dataSignatureValid <- dataValidRepre
-
+  
   ########## processing of conditions ##############
   #create sample condition for signature
   samplesConditionValid<-as.data.frame(fread(samplesConditionValidPath,sep="\t", header= FALSE ,check.names=F))
@@ -252,7 +252,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   }
   
   names(dataSigICGC) <- c("condition", ctgValidName)
- 
+  
   name.file <- paste0(dir.store, "/data-sig-contig-icgc.tsv")
   dataSaveICGC <- dataICGC[,c("Sample","condition", probesID)]
   colnames(dataSaveICGC) <- c("Sample", "condition", ctgValidName)
@@ -280,13 +280,37 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   
   resSign <- takeDataReturnAUC(frameTrain = dataSigTCGA, frameTest = dataSigICGC, absentContig = absentCtg, status = "risk")
   
-  finalTab <- rbind(resSign[[3]], resSign[[1]], resSign[[2]])
-  rownames(finalTab) <- c("AUC signature contig in ICGC", 
-			"Mean AUC cross-valid (TCGA)", "SD AUC cross-valid (TCGA)")
+  finalTab <- rbind(resSign[[1]], resSign[[2]], resSign[[3]], resSign[[4]],
+                    resSign[[5]], resSign[[6]], resSign[[7]], resSign[[8]],
+                    resSign[[9]], resSign[[10]], resSign[[11]], resSign[[12]])
+  rownames(finalTab) <- c( 
+    "Mean ROC_AUC cv (TCGA)", "SD ROC_AUC cv (TCGA)", 
+    "Mean ROC_AUC down cv (TCGA)", "SD ROC_AUC down cv (TCGA)",
+    "Mean ROCAUC up cv (TCGA)", "SD ROC_AUC up cv (TCGA)",
+    "ROC_AUC sig gene in ICGC", "PrAUC sig gene in ICGC",
+    "ROC_AUC down sig gene in ICGC", "PrAUC down sig gene in ICGC",
+    "ROC_AUC up sig gene in ICGC", "PrAUC up sig gene in ICGC")
   print(finalTab)
   
-  name.file <- paste0(dir.store, "/auc-sig-cotig.tsv")
-  write.table(finalTab, file = name.file, quote = FALSE, row.name = TRUE, col.names = FALSE)  
+  name.file <- paste0(dir.store, "/Roc_auc-sig-contig.tsv")
+  write.table(finalTab, file = name.file, quote = FALSE, row.name = TRUE, col.names = FALSE) 
+  
+  resSign <- takeDataReturnPR(frameTrain = dataSigTCGA, frameTest = dataSigICGC, absentContig = absentCtg, status = "risk")
+  
+  finalTab <- rbind(resSign[[1]], resSign[[2]], resSign[[3]], resSign[[4]],
+                    resSign[[5]], resSign[[6]], resSign[[7]], resSign[[8]],
+                    resSign[[9]], resSign[[10]], resSign[[11]], resSign[[12]])
+  rownames(finalTab) <- c( 
+    "Mean PR_AUC cv (TCGA)", "SD PR_AUC cv (TCGA)", 
+    "Mean PR_AUC down cv (TCGA)", "SD PR_AUC down cv (TCGA)",
+    "Mean PR_AUC up cv (TCGA)", "SD PR_AUC up cv (TCGA)",
+    "ROC_AUC sig gene in ICGC", "PrAUC sig gene in ICGC",
+    "ROC_AUC down sig gene in ICGC", "PrAUC down sig gene in ICGC",
+    "ROC_AUC up sig gene in ICGC", "PrAUC up sig gene in ICGC")
+  print(finalTab)  
+  
+  name.file <- paste0(dir.store, "/PR-auc-sig-contig.tsv")
+  write.table(finalTab, file = name.file, quote = FALSE, row.name = TRUE, col.names = FALSE) 
   
   # Store important variable 
   name.file <- paste0(dir.store, "/import-sig-contig.tsv")
@@ -294,7 +318,7 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
   importVar$Gene <- rownames(resSign[[4]]$importance)
   names(importVar) <- c("Overall", "Contig_map_to_gene")
   dataStore <- importVar[round(order(importVar$Overall, decreasing = T),4),]
-
+  
   print("Contribution of each contig in signature:")
   print(dataStore[, c("Contig_map_to_gene","Overall")])
   write.table(dataStore[, c("Contig_map_to_gene", "Overall")], file = name.file, sep = "\t", quote = FALSE, row.names = FALSE, col.names = TRUE)
@@ -304,6 +328,4 @@ pipeline <- function(topProbesPath, samplesConditionDisPath, dataValidPath, samp
 #Run the script to infer
 
 resContig <- pipeline(topProbesPath = topContig, samplesConditionDisPath = sampleTCGA, dataValidPath = kmerICGC,
-                    samplesConditionValidPath = sampleICGC, numruns = NUM_RUNS)
-
-#################################
+                      samplesConditionValidPath = sampleICGC, numruns = NUM_RUNS)
