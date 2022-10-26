@@ -1,5 +1,7 @@
 # PCa Gene-based vs Gene-free Comparison
 
+**Prognostic Signatures for prostate cancer: gene-based vs gene-free analysis**
+
 ## R scripts
 
 Scripts for reproducing results of "A Comparative Analysis of Reference-Free and Conventional Transcriptome Signatures for Prostate Cancer Prognosis".
